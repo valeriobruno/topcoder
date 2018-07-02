@@ -5,10 +5,14 @@ public class TeleportationMaze
 {
 
 	private String[] maze;
+  private int goal_x;
+  private int goal_y;
 
 	public int pathLength(String[] a, int r1, int c1, int r2, int c2)
 	{
-		this.maze =a;
+		this.maze = a;
+    this.goal_x = c2;
+    this.goal_y = r2;
 
 		PriorityQueue<Position> stack = new PriorityQueue<>();
 		HashSet<Position> visitedPositions = new HashSet<>();
@@ -20,7 +24,7 @@ public class TeleportationMaze
 
 			if( currentPos.x == c2 && currentPos.y == r2)
 				return currentPos.cost;
-			//System.out.println("pick "+currentPos);
+			System.out.println("pick "+currentPos);
 
 			visitedPositions.add(currentPos);
 
@@ -43,20 +47,17 @@ public class TeleportationMaze
 	private Collection<Position> findLeftMoves(Position pos)
 	{
 		List<Position> moves = new ArrayList<>(2);
-		Position walkPos = new Position(pos.x-1,pos.y,pos.cost+1);
 
-		if(valid(walkPos))
-			moves.add(walkPos);
+
+		if(valid(pos.x-1,pos.y))
+			moves.add(new Position(pos.x-1,pos.y,pos.cost+1));
 		else{
-
-			Position teleport;
 
 			for(int x = pos.x-2; x>=0; x--)
 			{
-				teleport = new Position(x,pos.y,pos.cost+2);
-				if(valid(teleport))
+				if(valid(x,pos.y))
 				{
-					moves.add(teleport);
+					moves.add(new Position(x,pos.y,pos.cost+2));
 					break;
 				}
 			}
@@ -67,20 +68,19 @@ public class TeleportationMaze
 	private Collection<Position> findRightMoves(Position pos)
 	{
 		List<Position> moves = new ArrayList<>(2);
-		Position walkPos = new Position(pos.x+1,pos.y,pos.cost+1);
 
-		if(valid(walkPos))
-			moves.add(walkPos);
+
+		if(valid(pos.x+1,pos.y))
+			moves.add(new Position(pos.x+1,pos.y,pos.cost+1));
 		else{
 
 			Position teleport;
 
 			for(int x = pos.x+2; x< maze[0].length(); x++)
 			{
-				teleport = new Position(x,pos.y,pos.cost+2);
-				if(valid(teleport))
+				if(valid(x,pos.y))
 				{
-					moves.add(teleport);
+					moves.add(new Position(x,pos.y,pos.cost+2));
 					break;
 				}
 			}
@@ -91,20 +91,17 @@ public class TeleportationMaze
 	private Collection<Position> findUpMoves(Position pos)
 	{
 		List<Position> moves = new ArrayList<>(2);
-		Position walkPos = new Position(pos.x,pos.y-1,pos.cost+1);
-
-		if(valid(walkPos))
-			moves.add(walkPos);
+		if(valid(pos.x,pos.y-1))
+			moves.add(new Position(pos.x,pos.y-1,pos.cost+1));
 		else{
 
 			Position teleport;
 
 			for(int y = pos.y-2; y>=0; y--)
 			{
-				teleport = new Position(pos.x,y,pos.cost+2);
-				if(valid(teleport))
+				if(valid(pos.x,y))
 				{
-					moves.add(teleport);
+					moves.add(new Position(pos.x,y,pos.cost+2));
 					break;
 				}
 			}
@@ -116,31 +113,29 @@ public class TeleportationMaze
 	private Collection<Position> findDownMoves(Position pos)
 	{
 		List<Position> moves = new ArrayList<>(2);
-		Position walkPos = new Position(pos.x,pos.y+1,pos.cost+1);
 
-		if(valid(walkPos))
-			moves.add(walkPos);
+		if(valid(pos.x,pos.y+1))
+			moves.add(new Position(pos.x,pos.y+1,pos.cost+1));
 		else{
 
 			Position teleport;
 
 			for(int y = pos.y+2; y< maze.length; y++)
 			{
-				teleport = new Position(pos.x,y,pos.cost+2);
-				if(valid(teleport))
+        if(valid(pos.x,y))
 				{
-					moves.add(teleport);
+					moves.add(new Position(pos.x,y,pos.cost+2));
 					break;
 				}
 			}
 		}
 		return moves;
 	}
-	boolean valid(Position pos)
+	boolean valid(int x, int y)
 	{
 		int xmax = maze[0].length();
 		int ymax = maze.length;
-		return  pos.y >=0 && pos.y < ymax && pos.x >=0 && pos.x < xmax &&  maze[pos.y].charAt(pos.x)== '.';
+		return  y >=0 && y < ymax && x >=0 && x < xmax &&  maze[y].charAt(x)== '.';
 	}
 
 	static class Position implements Comparable<Position>
@@ -156,7 +151,7 @@ public class TeleportationMaze
 
 		public int hashCode()
 		{
-			return x+y;
+			return 31* x+ 31*y;
 		}
 
 		public boolean equals(Object other)
@@ -178,6 +173,5 @@ public class TeleportationMaze
 		{
 			return this.cost - other.cost;
 		}
-
 	}
 }
