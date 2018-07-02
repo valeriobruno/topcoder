@@ -14,13 +14,16 @@ public class TeleportationMaze
     this.goal_x = c2;
     this.goal_y = r2;
 
-		PriorityQueue<Position> stack = new PriorityQueue<>();
+    HashMap<Position,Position> nextMoves = new HashMap<>();
+
+		PriorityQueue<Position> stack = new PriorityQueue<>(new PositionCostOrder());
 		HashSet<Position> visitedPositions = new HashSet<>(a.length*a[0].length());
 		stack.add(new Position(c1,r1,0));
 
 		while(!stack.isEmpty())
 		{
 			Position currentPos = stack.remove();
+      nextMoves.remove(currentPos);
 
 			if( currentPos.x == c2 && currentPos.y == r2)
 				return currentPos.cost;
@@ -30,12 +33,37 @@ public class TeleportationMaze
 
       List<Position> moves = new ArrayList<Position>(8);
 
-      stack.addAll(findLeftMoves(currentPos));
-      stack.addAll(findRightMoves(currentPos));
-      stack.addAll(findUpMoves(currentPos));
-      stack.addAll(findDownMoves(currentPos));
 
-      stack = purgeDuplicates(stack);
+
+      moves.addAll(findLeftMoves(currentPos));
+      moves.addAll(findRightMoves(currentPos));
+      moves.addAll(findUpMoves(currentPos));
+      moves.addAll(findDownMoves(currentPos));
+
+      for( Position p : moves)
+      {
+
+        Position oldPos = nextMoves.get(p);
+
+        if(visitedPositions.contains(p))
+          continue;
+
+        if(oldPos == null)
+        {
+          stack.add(p);
+          nextMoves.put(p,p);
+        }
+        else if( oldPos.cost > p.cost)
+        {
+          stack.remove(oldPos);
+          nextMoves.remove(oldPos);
+          stack.add(p);
+          nextMoves.put(p,p);
+        }
+
+      }
+
+      //stack = purgeDuplicates(stack);
 
       //System.out.println("stack: "+stack);
 
@@ -192,17 +220,26 @@ public class TeleportationMaze
 			return x+","+y+"("+cost+")";
 		}
 
-		public int compareTo(Position other)
+    public int compareTo(Position other)
+    {
+      return (this.x - other.x) + 31* (this.y - other.y);
+    }
+
+	}
+
+   class PositionCostOrder implements Comparator<Position>
+  {
+    public int compare (Position one, Position other)
 		{
-      int costDelta = this.cost - other.cost;
+      int costDelta = one.cost - other.cost;
 
       if(costDelta == 0)
       {
-        int thisDist = Math.abs(this.x - goal_x) + Math.abs(this.y - goal_y);
+        int thisDist = Math.abs(one.x - goal_x) + Math.abs(one.y - goal_y);
         int otherDist = Math.abs(other.x - goal_x) + Math.abs(other.y - goal_y);;
         return thisDist - otherDist;
       }else
 			return costDelta ;
 		}
-	}
+  }
 }
