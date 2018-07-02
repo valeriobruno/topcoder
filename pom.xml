@@ -1,7 +1,7 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
 	<groupId>it.valeriobruno.topcoder</groupId>
-	<artifactId>srm735div2</artifactId>
+	<artifactId>solutions</artifactId>
 	<version>1.0.0</version>
 
   <properties>
