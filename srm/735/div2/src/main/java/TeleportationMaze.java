@@ -28,15 +28,16 @@ public class TeleportationMaze
 
 			visitedPositions.add(currentPos);
 
-			//find left moves
-			stack.addAll(findLeftMoves(currentPos).stream().filter( p -> !(visitedPositions.contains(p)) ).collect(Collectors.toList()) );
-			//System.out.println("stack: "+stack);
-			stack.addAll(findRightMoves(currentPos).stream().filter( p -> !(visitedPositions.contains(p) ) ).collect(Collectors.toList()) );
-			//System.out.println("stack: "+stack);
-			stack.addAll(findUpMoves(currentPos).stream().filter( p -> !(visitedPositions.contains(p) ) ).collect(Collectors.toList()) );
-			//System.out.println("stack: "+stack);
-			stack.addAll(findDownMoves(currentPos).stream().filter( p -> !(visitedPositions.contains(p)) ).collect(Collectors.toList()) );
-			//System.out.println("stack: "+stack);
+      List<Position> moves = new ArrayList<Position>(8);
+
+      moves.addAll(findLeftMoves(currentPos));
+      moves.addAll(findRightMoves(currentPos));
+      moves.addAll(findUpMoves(currentPos));
+      moves.addAll(findDownMoves(currentPos));
+
+     stack.addAll( moves.stream().filter( p -> !visitedPositions.contains(p) ).collect(Collectors.toList()) );
+
+      //System.out.println("stack: "+stack);
 
 		}
 
