@@ -24,18 +24,18 @@ public class TeleportationMaze
 
 			if( currentPos.x == c2 && currentPos.y == r2)
 				return currentPos.cost;
-			System.out.println("pick "+currentPos);
+			//System.out.println("pick "+currentPos);
 
 			visitedPositions.add(currentPos);
 
       List<Position> moves = new ArrayList<Position>(8);
 
-      moves.addAll(findLeftMoves(currentPos));
-      moves.addAll(findRightMoves(currentPos));
-      moves.addAll(findUpMoves(currentPos));
-      moves.addAll(findDownMoves(currentPos));
+      stack.addAll(findLeftMoves(currentPos));
+      stack.addAll(findRightMoves(currentPos));
+      stack.addAll(findUpMoves(currentPos));
+      stack.addAll(findDownMoves(currentPos));
 
-     stack.addAll( moves.stream().filter( p -> !visitedPositions.contains(p) ).collect(Collectors.toList()) );
+      stack = purgeDuplicates(stack);
 
       //System.out.println("stack: "+stack);
 
@@ -44,6 +44,28 @@ public class TeleportationMaze
 		return -1;
 
 	}
+
+
+  private PriorityQueue purgeDuplicates(PriorityQueue<Position> q)
+  {
+    HashSet<Position> alreadyIn = new HashSet<>();
+    PriorityQueue<Position> purgedQueue = new PriorityQueue<Position>();
+
+    while(!q.isEmpty())
+    {
+      Position p = q.remove();
+
+
+      if(!alreadyIn.contains(p))
+      {
+        alreadyIn.add(p);
+        purgedQueue.add(p);
+      }
+    }
+
+    return purgedQueue;
+  }
+
 
 	private Collection<Position> findLeftMoves(Position pos)
 	{
