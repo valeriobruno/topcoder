@@ -15,7 +15,7 @@ public class TeleportationMaze
     this.goal_y = r2;
 
 		PriorityQueue<Position> stack = new PriorityQueue<>();
-		HashSet<Position> visitedPositions = new HashSet<>();
+		HashSet<Position> visitedPositions = new HashSet<>(a.length*a[0].length());
 		stack.add(new Position(c1,r1,0));
 
 		while(!stack.isEmpty())
@@ -161,7 +161,7 @@ public class TeleportationMaze
 		return  y >=0 && y < ymax && x >=0 && x < xmax &&  maze[y].charAt(x)== '.';
 	}
 
-	static class Position implements Comparable<Position>
+  class Position implements Comparable<Position>
 	{
 		int x, y, cost;
 
@@ -174,7 +174,7 @@ public class TeleportationMaze
 
 		public int hashCode()
 		{
-			return 31* x+ 31*y;
+			return 31* x+ 17*y;
 		}
 
 		public boolean equals(Object other)
@@ -194,7 +194,15 @@ public class TeleportationMaze
 
 		public int compareTo(Position other)
 		{
-			return this.cost - other.cost;
+      int costDelta = this.cost - other.cost;
+
+      if(costDelta == 0)
+      {
+        int thisDist = Math.abs(this.x - goal_x) + Math.abs(this.y - goal_y);
+        int otherDist = Math.abs(other.x - goal_x) + Math.abs(other.y - goal_y);;
+        return thisDist - otherDist;
+      }else
+			return costDelta ;
 		}
 	}
 }
